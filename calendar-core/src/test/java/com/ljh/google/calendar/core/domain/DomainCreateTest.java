@@ -1,4 +1,4 @@
-package com.ljh.google.calendar.core;
+package com.ljh.google.calendar.core.domain;
 
 import com.ljh.google.calendar.core.domain.ScheduleType;
 import com.ljh.google.calendar.core.domain.entity.Schedule;
