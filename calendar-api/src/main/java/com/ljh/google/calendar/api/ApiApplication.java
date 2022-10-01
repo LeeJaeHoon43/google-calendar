@@ -16,7 +16,7 @@ import java.util.List;
 @EntityScan("com.ljh.google.calendar.core")
 @EnableJpaRepositories("com.ljh.google.calendar.core")
 @Controller
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.ljh.google.calendar")
 public class ApiApplication {
 
     private final SimpleEntityRepository repository;
