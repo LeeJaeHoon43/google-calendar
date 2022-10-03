@@ -1,10 +1,15 @@
 package com.ljh.google.calendar.core.domain.entity;
 
+import com.ljh.google.calendar.core.domain.Event;
 import com.ljh.google.calendar.core.domain.RequestStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Table(name = "engagements")
@@ -19,5 +24,10 @@ public class Engagement extends BaseEntity{
     @ManyToOne
     private User attendee;
 
+    @Enumerated(value = EnumType.STRING)
     private RequestStatus requestStatus;
+
+    public Event getEvent(){
+        return schedule.toEvent();
+    }
 }
