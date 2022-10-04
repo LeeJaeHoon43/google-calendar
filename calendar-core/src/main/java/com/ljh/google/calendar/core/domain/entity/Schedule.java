@@ -4,9 +4,12 @@ import com.ljh.google.calendar.core.domain.Event;
 import com.ljh.google.calendar.core.domain.Notification;
 import com.ljh.google.calendar.core.domain.ScheduleType;
 import com.ljh.google.calendar.core.domain.Task;
+import com.ljh.google.calendar.core.util.Period;
 import lombok.*;
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Builder(access = AccessLevel.PACKAGE)
 @AllArgsConstructor
@@ -71,5 +74,9 @@ public class Schedule extends BaseEntity{
 
     public Notification toNotification(){
         return new Notification(this);
+    }
+
+    public boolean isOverlapped(LocalDate date) {
+        return Period.of(getStartAt(), getEndAt()).isOverlapped(date);
     }
 }
