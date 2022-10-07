@@ -3,6 +3,8 @@ package com.ljh.google.calendar.core.service;
 import com.ljh.google.calendar.core.domain.entity.User;
 import com.ljh.google.calendar.core.domain.entity.repository.UserRepository;
 import com.ljh.google.calendar.core.dto.UserCreateReq;
+import com.ljh.google.calendar.core.exception.CalendarException;
+import com.ljh.google.calendar.core.exception.ErrorCode;
 import com.ljh.google.calendar.core.util.Encryptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ public class UserService {
     public User create(UserCreateReq userCreateReq) {
         userRepository.findByEmail(userCreateReq.getEmail())
                 .ifPresent(u -> {
-                    throw new RuntimeException("user already existed.");
+                    throw new CalendarException(ErrorCode.USER_NOT_FOUND);
                 });
         return userRepository.save(new User(
                 userCreateReq.getName(),
@@ -40,6 +42,6 @@ public class UserService {
     @Transactional
     public User findByUserId(Long userId){
         return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("no user by id."));
+                .orElseThrow(() -> new CalendarException(ErrorCode.USER_NOT_FOUND));
     }
 }
