@@ -1,15 +1,12 @@
 package com.ljh.google.calendar.api.controller;
 
 import com.ljh.google.calendar.api.dto.*;
-import com.ljh.google.calendar.api.service.EventService;
-import com.ljh.google.calendar.api.service.NotificationService;
-import com.ljh.google.calendar.api.service.ScheduleQueryService;
-import com.ljh.google.calendar.api.service.TaskService;
+import com.ljh.google.calendar.api.service.*;
+import com.ljh.google.calendar.core.domain.RequestStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -23,6 +20,7 @@ public class ScheduleController {
     private final ScheduleQueryService scheduleQueryService;
     private final TaskService taskService;
     private final EventService eventService;
+    private final EngagementService engagementService;
     private final NotificationService notificationService;
 
     @PostMapping("/tasks")
@@ -68,5 +66,14 @@ public class ScheduleController {
             @DateTimeFormat(pattern = "yyyy-MM") String yearMonth
     ){
         return scheduleQueryService.getScheduleByMonth(authUser, yearMonth == null ? YearMonth.now() : YearMonth.parse(yearMonth));
+    }
+    
+    @PutMapping("/events/engagements/{engagementId}")
+    public RequestStatus updateEngagement(
+            @Valid @RequestBody ReplyEngagementReq replyEngagementReq,
+            @PathVariable Long engagementId,
+            AuthUser authUser
+    ){
+        return engagementService.update(authUser, engagementId, replyEngagementReq.getType());
     }
 }

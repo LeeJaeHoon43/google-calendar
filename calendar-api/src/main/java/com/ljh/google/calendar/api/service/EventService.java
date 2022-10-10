@@ -1,6 +1,7 @@
 package com.ljh.google.calendar.api.service;
 
 import com.ljh.google.calendar.api.dto.AuthUser;
+import com.ljh.google.calendar.api.dto.EngagementEmailStuff;
 import com.ljh.google.calendar.api.dto.EventCreateReq;
 import com.ljh.google.calendar.core.domain.RequestStatus;
 import com.ljh.google.calendar.core.domain.entity.Engagement;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,16 +49,21 @@ public class EventService {
                 eventCreateReq.getEndAt(),
                 userService.findByUserId(authUser.getId()));
         scheduleRepository.save(eventSchedule);
-        eventCreateReq.getAttendeeIds()
-                .forEach(atId -> {
-                    final User attendee = userService.findByUserId(atId);
+        final List<User> attendees = eventCreateReq.getAttendeeIds().stream().map(userService::findByUserId).collect(Collectors.toList());
+        attendees.forEach(attendee -> {
                     final Engagement engagement = Engagement.builder()
                             .schedule(eventSchedule)
                             .requestStatus(RequestStatus.REQUESTED)
                             .attendee(attendee)
                             .build();
                     engagementRepository.save(engagement);
-                    emailService.sendEngagement(engagement);
+                    emailService.sendEngagement(EngagementEmailStuff.builder()
+                                    .engagementId(engagement.getId())
+                                    .title(engagement.getEvent().getTitle())
+                                    .toEmail(engagement.getAttendee().getEmail())
+                                    .attendeeEmails(attendees.stream().map(User::getEmail).collect(Collectors.toList()))
+                                    .period(engagement.getEvent().getPeriod())
+                            .build());
                 });
     }
 }
