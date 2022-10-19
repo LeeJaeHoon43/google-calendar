@@ -1,0 +1,2 @@
+* * * * * /Users/ljw16/IdeaProjects/google-calendar/script/cron_test.sh >> /Users/ljw16/IdeaProjects/google-calendar/log/cron_test.sh.log 2>&1
+* * * * * /Users/ljw16/IdeaProjects/google-calendar/script/batch_cron.sh >> /Users/ljw16/IdeaProjects/google-calendar/log/batch_cron.sh.log 2>&1
