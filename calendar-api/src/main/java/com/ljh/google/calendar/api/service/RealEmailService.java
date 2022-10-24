@@ -2,6 +2,7 @@ package com.ljh.google.calendar.api.service;
 
 import com.ljh.google.calendar.api.controller.BatchController;
 import com.ljh.google.calendar.api.dto.EngagementEmailStuff;
+import com.ljh.google.calendar.core.domain.entity.Share;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -9,7 +10,6 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
-
 import javax.mail.internet.MimeMessage;
 import java.util.Locale;
 
@@ -34,5 +34,10 @@ public class RealEmailService implements EmailService{
     @Override
     public void sendAlarmMail(BatchController.SendMailBatchReq req) {
         System.out.println("send alarm. " + req.toString());
+    }
+
+    @Override
+    public void sendShareRequestMail(String email, String name, Share.Direction direction) {
+        System.out.println("send share request mail. " + email + ", " + name + ", " + direction);
     }
 }

@@ -2,12 +2,12 @@ package com.ljh.google.calendar.api.dto;
 
 import com.ljh.google.calendar.core.domain.RequestReplyType;
 
-public class ReplyEngagementReq {
+public class ReplyReq {
     private RequestReplyType type; // REJECT, ACCEPT
 
-    public ReplyEngagementReq(){}
+    public ReplyReq(){}
 
-    public ReplyEngagementReq(RequestReplyType type) {
+    public ReplyReq(RequestReplyType type) {
         this.type = type;
     }
 

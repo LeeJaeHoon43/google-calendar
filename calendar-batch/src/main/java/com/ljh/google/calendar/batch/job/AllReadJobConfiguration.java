@@ -19,7 +19,6 @@ import org.springframework.batch.item.database.support.SqlPagingQueryProviderFac
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,14 +36,19 @@ public class AllReadJobConfiguration {
     private static final int FETCH_SIZE = 4;
 
     @Bean
-    public Job allReadJob(Step allReadStep){
+    public Job allReadJob(
+            Step allReadStep
+    ) {
         return jobBuilderFactory.get("allReadJob")
                 .start(allReadStep)
                 .build();
     }
 
     @Bean
-    public Step allReadStep(ItemReader<Schedule> allReadPagingReader, ItemWriter<Schedule> allReadWriter){
+    public Step allReadStep(
+            ItemReader<Schedule> allReadPagingReader,
+            ItemWriter<Schedule> allReadWriter
+    ) {
         return stepBuilderFactory.get("allReadStep")
                 .<Schedule, Schedule>chunk(CHUNK_SIZE)
                 .reader(allReadPagingReader)
@@ -54,8 +58,10 @@ public class AllReadJobConfiguration {
     }
 
     @Bean
-    public JdbcCursorItemReader<Schedule> allReadReader(){
+    public JdbcCursorItemReader<Schedule> allReadReader() {
         return new JdbcCursorItemReaderBuilder<Schedule>()
+                .verifyCursorPosition(false)
+                .fetchSize(FETCH_SIZE)
                 .dataSource(dataSource)
                 .rowMapper(new BeanPropertyRowMapper<>(Schedule.class))
                 .sql("select * from schedules order by id")
@@ -64,7 +70,8 @@ public class AllReadJobConfiguration {
     }
 
     @Bean
-    public JdbcPagingItemReader<Schedule> allReadPagingReader(PagingQueryProvider queryProvider){
+    public JdbcPagingItemReader<Schedule> allReadPagingReader(
+            PagingQueryProvider queryProvider) {
         return new JdbcPagingItemReaderBuilder<Schedule>()
                 .pageSize(CHUNK_SIZE)
                 .fetchSize(FETCH_SIZE)
@@ -76,17 +83,17 @@ public class AllReadJobConfiguration {
     }
 
     @Bean
-    public PagingQueryProvider queryProvider() throws Exception{
-        SqlPagingQueryProviderFactoryBean queryProviderFactoryBean = new SqlPagingQueryProviderFactoryBean();
-        queryProviderFactoryBean.setDataSource(dataSource);
-        queryProviderFactoryBean.setSelectClause("*");
-        queryProviderFactoryBean.setFromClause("from schedules");
+    public PagingQueryProvider queryProvider() throws Exception {
+        SqlPagingQueryProviderFactoryBean queryProvider = new SqlPagingQueryProviderFactoryBean();
+        queryProvider.setDataSource(dataSource);
+        queryProvider.setSelectClause("*");
+        queryProvider.setFromClause("from schedules");
 
-        Map<String, Order> sortKeys = new HashMap<>();
+        Map<String, Order> sortKeys = new HashMap<>(1);
         sortKeys.put("id", Order.ASCENDING);
 
-        queryProviderFactoryBean.setSortKeys(sortKeys);
-        return queryProviderFactoryBean.getObject();
+        queryProvider.setSortKeys(sortKeys);
+        return queryProvider.getObject();
     }
 
     @Bean
